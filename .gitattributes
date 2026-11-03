@@ -1,0 +1,15 @@
+# LF everywhere: in the repo and in every checkout, on every OS
+* text=auto eol=lf
+
+# Binary files are never touched
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.woff binary
+*.woff2 binary
