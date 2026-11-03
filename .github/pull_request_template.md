@@ -1,12 +1,5 @@
 <!--
-The PR title becomes the commit on main, so write it as a Conventional Commit:
-  feat: add warm pool
-  fix: reconnect harness after envmgr restart
-One line, no period. This description is for reviewers only and isn't kept in history.
+Title = the commit on main: `type: short description`
+Write a sentence or two on why, if the title doesn't say it all.
+Working on an issue? Add "Closes #12" so the board moves it for you.
 -->
-
-## What and why
-
-## How it was tested
-
-## Notes for the reviewer
