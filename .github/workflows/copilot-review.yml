@@ -1,0 +1,13 @@
+name: copilot-review
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  request:
+    permissions:
+      pull-requests: write
+    uses: kubernetes-learning-platform/platform/.github/workflows/copilot-review.yml@main
