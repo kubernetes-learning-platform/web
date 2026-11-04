@@ -6,6 +6,7 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - **The canvas draws only real cluster state.** Nodes, pods, services and edges come only from `TopologySnapshot` / `TopologyDiff`. Flag code that adds, removes or changes graph entities based on chat text or agent messages.
 - **The agent only moves the camera.** `ViewIntent` (`focus`, `highlight`, `annotate`, `show_config`) changes the view state, never the topology.
 - **Revisions.** Apply diffs in revision order. Ignore stale ones, and on a gap reconnect with `Resync{afterSeq}`. No silent desync.
+- **Sandbox link drops.** On `SessionStatus{reconnecting}`, show it and hold the canvas on its last state; the next `TopologySnapshot` replaces it. Don't clear the graph or fake a state in between.
 - **Replay uses the same reducers.** Replay is just a different message source (the events endpoint instead of the socket). Flag replay-only rendering paths.
 - **Control.** The terminal and the editable inspector (`ApplyManifest`) are only active while this user holds control. Otherwise they're read-only.
 - **Types.** Use the generated types from `@kubernetes-learning-platform/contracts`. Never hand-write message types.

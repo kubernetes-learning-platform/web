@@ -10,7 +10,7 @@ Part of [**kubernetes-learning-platform**](https://github.com/kubernetes-learnin
 
 ## 🗺️ Routes
 
-`web` has no API routes. It's a pure client of `api`, through the same reverse proxy.
+`web` has no API routes. It's a pure client of `api`, through the same reverse proxy. The deployed app runs on the Hetzner box and is only served over the WireGuard mesh: the demo laptop opens it at the Hetzner box's mesh address, over HTTPS from Caddy's internal CA.
 
 | Route | Screen |
 |---|---|
@@ -25,6 +25,8 @@ Part of [**kubernetes-learning-platform**](https://github.com/kubernetes-learnin
 2. **The agent only moves the camera.** Its `ViewIntent` messages (`focus`, `highlight`, `annotate`, `show_config`) change where you look, not what exists.
 
 Replay runs the exact same reducers. It's just a different message source.
+
+**When the sandbox link drops.** The sandboxes live on another machine across the mesh. If `api` sends `SessionStatus{reconnecting}`, show a banner and keep the canvas on its last state. The next `TopologySnapshot` replaces it once the link is back.
 
 ## 🧩 Modules
 
@@ -60,7 +62,7 @@ No real sandbox needed. Run Postgres and api from `platform`'s dev Compose with 
 
 The message types come from `@kubernetes-learning-platform/contracts` on GitHub Packages. Installing it needs a personal access token with `read:packages`. See [contracts → Installing the packages](https://github.com/kubernetes-learning-platform/contracts#-installing-the-packages).
 
-**Ships:** the `web` container image → GHCR.
+**Ships:** the `web` container image (multi-arch) → GHCR. It runs in Docker Compose on the Hetzner box. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the mesh is served over HTTPS for exactly that reason.
 
 ## 📚 More
 
