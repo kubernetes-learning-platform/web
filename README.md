@@ -2,11 +2,41 @@
 
 > **The Next.js frontend:** the live topology canvas, scenarios, terminal, optional helper chat, config inspector and session replay.
 
-Part of [**kubernetes-learning-platform**](https://github.com/kubernetes-learning-platform/docs), an AI tutor with a live Kubernetes lab. Start at the [docs hub](https://github.com/kubernetes-learning-platform/docs) for the big picture.
+Part of [**kubernetes-learning-platform**](https://github.com/kubernetes-learning-platform/docs), a live Kubernetes lab with an optional AI helper. Start at the [docs hub](https://github.com/kubernetes-learning-platform/docs) for the big picture.
 
 **Owner:** Person 3 · **Status:** planned layout, scaffolding lands in M1.
 
 ---
+
+## 🧭 What this repo does
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/web-dark.svg">
+  <img src="assets/web-light.svg" width="100%" alt="On the left, socket.ts receives messages from api and feeds two stores: topology, which holds what exists, and view, which holds where you look. On the right, the lab screen: a topology canvas showing nodes cp, w1 and w2 with their pods and a service, a terminal, the scenario panel with its checks, the helper chat, and the config inspector with an Apply button.">
+</picture>
+
+`web` is everything you see: the app in the browser. It has no backend of its own. Every piece of data comes from `api`, through one REST client and one WebSocket.
+
+One screen does most of the work, the lab at `/session/[id]`:
+
+| Pane | What it is |
+|---|---|
+| **Topology canvas** | A live picture of your cluster: nodes, the pods on them, services and ingresses. It updates itself as the cluster changes |
+| **Terminal** | A real shell in your sandbox VM |
+| **Scenario** | The current step's goal, its checks turning green, hints, **Reset** and **Next** |
+| **Helper chat** | The optional AI helper, and the question card it uses to ask how to continue |
+| **Config inspector** | The full YAML of whatever you click, editable, with **Apply** |
+
+### How the screen stays true
+
+1. `lib/socket.ts` holds the one WebSocket to `api` and decodes each binary Protobuf message.
+2. Messages about the cluster go to the **topology** store. It starts from a full snapshot and applies numbered diffs in order.
+3. Messages from the helper about where to look go to the **view** store, which only controls the camera, highlights and notes.
+4. The canvas draws the topology store, seen through the view store.
+
+So what exists on screen can only come from the real cluster, and the helper can only point at it. Replay uses the same stores and the same drawing code. Only the source of the messages changes: the saved event log in place of the live socket.
+
+The whole system at a glance is in the [docs hub](https://github.com/kubernetes-learning-platform/docs#readme).
 
 ## 🗺️ Routes
 

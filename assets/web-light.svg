@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" class="sheet" role="img" aria-labelledby="st sd">
+<title id="st">The lab screen</title>
+<desc id="sd">The lab screen. Connections: api to socket.ts; socket.ts to topology; topology to Topology canvas; view to Topology canvas; topology to view.</desc>
+<style>
+.sheet{--paper:#EFCB86;--ink:#35250D;--soft:#6B4E1E;--fill:#F6DBA4;--grid:#C99F52;--pulse:#B4370C;}
+.sheet{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.paper{fill:var(--paper);stroke:var(--ink);stroke-width:3}
+.inner{fill:none;stroke:var(--ink);stroke-width:.8}
+.dot{fill:var(--grid)}
+.group{fill:none;stroke:var(--soft);stroke-width:1.2;stroke-dasharray:7 5}
+.mask{fill:var(--paper)}
+.box{fill:var(--fill);stroke:var(--ink);stroke-width:1.5}
+.box.ext{fill:var(--paper);stroke:var(--soft);stroke-dasharray:4 3}
+.box.pane{fill:var(--paper)}
+.bar{fill:var(--ink)}
+.line,.hair{fill:none;stroke:var(--ink);stroke-width:1.2}
+.hair{stroke:var(--soft);stroke-width:.8}
+.wire{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.wire.dash{stroke-dasharray:5 4}
+.head{fill:var(--ink)}
+.t{fill:var(--ink);font-size:13px;font-weight:700;text-anchor:middle;letter-spacing:.02em}
+.t.inv{fill:var(--paper)}
+.s{fill:var(--soft);font-size:10.5px;text-anchor:middle}
+.s.left,.s.code{text-anchor:start}
+.s.code{fill:var(--ink)}
+.l{fill:var(--ink);font-size:10.5px;text-anchor:middle}
+.num{fill:var(--paper);font-size:10.5px;font-weight:700;text-anchor:middle}
+.note{fill:var(--ink);font-size:12px;text-anchor:middle;letter-spacing:.02em}
+.cap{fill:var(--soft);font-size:9.5px;letter-spacing:.13em}
+.big{fill:var(--ink);font-size:16px;font-weight:700}
+.tb{fill:var(--paper);stroke:var(--ink);stroke-width:1.4}
+.chip{fill:var(--fill);stroke:var(--ink);stroke-width:1.1}
+.chip.on{fill:var(--ink)}
+.thin{fill:none;stroke:var(--soft);stroke-width:1}
+.pulse{fill:none;stroke:var(--pulse);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1.2 98.8;animation:flow 6s linear infinite}
+@keyframes flow{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.pulse{display:none}}
+</style>
+<defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle class="dot" cx="10" cy="10" r=".9"/></pattern><marker id="arrow" viewBox="0 0 8 8" refX="7.2" refY="4" markerWidth="8" markerHeight="8" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path class="head" d="M0 .8 L7.6 4 L0 7.2z"/></marker></defs>
+<rect class="paper" x="1.5" y="1.5" width="997" height="557" rx="16"/>
+<rect fill="url(#dots)" x="10" y="10" width="980" height="540" rx="10"/>
+<rect class="inner" x="9.5" y="9.5" width="981" height="541" rx="10"/>
+<rect class="group" x="330" y="50" width="640" height="410" rx="8"/><rect class="mask" x="342" y="43" width="103" height="14"/><text class="cap" x="349" y="53.5">/SESSION/[ID]</text>
+<polyline class="wire" points="70,210 70,120 80,110 150,110" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<polyline class="wire" points="220,150 220,200" marker-end="url(#arrow)"/>
+<polyline class="wire" points="290,240 360,240" marker-end="url(#arrow)"/>
+<polyline class="wire" points="290,380 330,380 340,370 340,290 350,280 360,280" marker-end="url(#arrow)"/>
+<polyline class="wire" points="220,280 220,340"/>
+<polyline class="pulse" pathLength="100" style="animation-delay:-0.00s" points="70,210 70,120 80,110 150,110"/>
+<polyline class="pulse" pathLength="100" style="animation-delay:-1.37s" points="220,150 220,200"/>
+<polyline class="pulse" pathLength="100" style="animation-delay:-2.74s" points="290,240 360,240"/>
+<polyline class="pulse" pathLength="100" style="animation-delay:-4.11s" points="290,380 330,380 340,370 340,290 350,280 360,280"/>
+<rect class="box ext" x="30" y="210" width="90" height="80" rx="3"/><text class="t" x="75.0" y="247.5">api</text><text class="s" x="75.0" y="261.5">/ws</text>
+<rect class="box own" x="150" y="80" width="140" height="70" rx="3"/><path class="bar" d="M153 80 h134 a3 3 0 0 1 3 3 v19 h-140 v-19 a3 3 0 0 1 3 -3z"/><text class="t inv" x="220.0" y="95.5">socket.ts</text><text class="s" x="220.0" y="129.0">protobuf-es</text>
+<rect class="box own" x="150" y="200" width="140" height="80" rx="3"/><path class="bar" d="M153 200 h134 a3 3 0 0 1 3 3 v19 h-140 v-19 a3 3 0 0 1 3 -3z"/><text class="t inv" x="220.0" y="215.5">topology</text><text class="s" x="220.0" y="247.5">what exists</text><text class="s" x="220.0" y="260.5">snapshot + diffs</text>
+<rect class="box own" x="150" y="340" width="140" height="80" rx="3"/><path class="bar" d="M153 340 h134 a3 3 0 0 1 3 3 v19 h-140 v-19 a3 3 0 0 1 3 -3z"/><text class="t inv" x="220.0" y="355.5">view</text><text class="s" x="220.0" y="387.5">where you look</text><text class="s" x="220.0" y="400.5">ViewIntent</text>
+<rect class="box pane" x="360" y="80" width="340" height="230" rx="3"/><text class="cap" x="368" y="94">TOPOLOGY CANVAS</text><path class="hair" d="M360 100 h340"/>
+<rect class="box pane" x="360" y="340" width="340" height="100" rx="3"/><text class="cap" x="368" y="354">TERMINAL</text><path class="hair" d="M360 360 h340"/>
+<rect class="box pane" x="730" y="80" width="220" height="120" rx="3"/><text class="cap" x="738" y="94">SCENARIO</text><path class="hair" d="M730 100 h220"/>
+<rect class="box pane" x="730" y="220" width="220" height="100" rx="3"/><text class="cap" x="738" y="234">HELPER CHAT</text><path class="hair" d="M730 240 h220"/>
+<rect class="box pane" x="730" y="340" width="220" height="100" rx="3"/><text class="cap" x="738" y="354">CONFIG INSPECTOR</text><path class="hair" d="M730 360 h220"/>
+<rect class="chip" x="385" y="190" width="88" height="94" rx="4"/><text class="s code" x="393" y="205">cp</text><rect class="chip" x="395" y="216" width="30" height="22" rx="3"/><rect class="chip" x="490" y="190" width="88" height="94" rx="4"/><text class="s code" x="498" y="205">w1</text><rect class="chip" x="500" y="216" width="30" height="22" rx="3"/><rect class="chip" x="536" y="216" width="30" height="22" rx="3"/><rect class="chip" x="500" y="246" width="30" height="22" rx="3"/><rect class="chip" x="595" y="190" width="88" height="94" rx="4"/><text class="s code" x="603" y="205">w2</text><rect class="chip" x="605" y="216" width="30" height="22" rx="3"/><rect class="chip on" x="641" y="216" width="30" height="22" rx="3"/><rect class="chip" x="480" y="122" width="110" height="24" rx="12"/><text class="s" x="535" y="138">svc/web</text><path class="thin" d="M510 146 L510 216 M535 146 L535 170 L616 170 L616 216 M560 146 L560 160 L656 160 L656 216"/><text class="s left" x="385" y="301">one pod on w2 is crash-looping</text><text class="s code" x="372" y="382">$ kubectl get pods -n shop</text><text class="s left" x="372" y="398">web-7c9f-abc   0/1   CrashLoopBackOff</text><text class="s code" x="372" y="414">agent$ kubectl describe ingress web</text><text class="s code" x="742" y="118">Fix a broken ingress</text><rect class="chip on" x="742" y="130" width="11" height="11" rx="2"/><text class="s left" x="760" y="140">Service web exists</text><rect class="chip" x="742" y="149" width="11" height="11" rx="2"/><text class="s left" x="760" y="159">GET / returns 200</text><rect class="chip" x="742" y="172" width="54" height="18" rx="3"/><text class="s" x="769" y="185">Hint</text><rect class="chip" x="804" y="172" width="54" height="18" rx="3"/><text class="s" x="831" y="185">Reset</text><rect class="chip on" x="866" y="172" width="54" height="18" rx="3"/><text class="s" x="893" y="185" style="fill:var(--paper)">Next</text><rect class="chip" x="800" y="250" width="140" height="20" rx="8"/><text class="s" x="870" y="264">why is it stuck?</text><rect class="chip" x="740" y="278" width="170" height="34" rx="8"/><text class="s left" x="750" y="292">The Ingress points at a</text><text class="s left" x="750" y="305">Service that is missing.</text><text class="s code" x="742" y="378">kind: Ingress</text><text class="s left" x="742" y="392">spec:</text><text class="s left" x="742" y="406">  rules:</text><text class="s left" x="742" y="420">  - host: shop.localhost</text><rect class="chip on" x="884" y="366" width="56" height="18" rx="3"/><text class="s" x="912" y="379" style="fill:var(--paper)">Apply</text>
+<rect class="bar" x="28" y="505" width="26" height="14" rx="2"/>
+<text class="s left" x="62" y="516">state</text>
+<rect class="box pane" x="116.025" y="505" width="26" height="14" rx="2"/>
+<text class="s left" x="150.025" y="516">what you see</text>
+<rect class="box ext" x="248.88500000000002" y="505" width="26" height="14" rx="2"/>
+<text class="s left" x="282.885" y="516">api</text>
+<rect class="tb" x="637" y="490" width="339" height="46"/><path class="line" d="M898 490 v46"/><text class="cap" x="647" y="505">KUBERNETES-LEARNING-PLATFORM / WEB</text><text class="big" x="647" y="526">The lab screen</text><text class="cap" x="908" y="505">SHEET</text><text class="big" x="908" y="526">9/10</text>
+</svg>
