@@ -2,43 +2,41 @@
 
 > **The Next.js frontend:** the live topology canvas, scenarios, terminal, optional helper chat, config inspector and session replay.
 
-Part of [**kubernetes-learning-platform**](https://github.com/kubernetes-learning-platform/docs), a live Kubernetes lab with an optional AI helper. Start at the [docs hub](https://github.com/kubernetes-learning-platform/docs) for the big picture.
+Part of [kubernetes-learning-platform](https://github.com/kubernetes-learning-platform/docs), a live Kubernetes lab with an optional AI helper. The [docs repository](https://github.com/kubernetes-learning-platform/docs) describes the overall system.
 
 **Owner:** Person 3 · **Status:** planned layout, scaffolding lands in M1.
 
 ---
 
-## 🧭 What this repo does
+## Overview
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/web-dark.svg">
   <img src="assets/web-light.svg" width="100%" alt="On the left, socket.ts receives messages from api and feeds two stores: topology, which holds what exists, and view, which holds where you look. On the right, the lab screen: a topology canvas showing nodes cp, w1 and w2 with their pods and a service, a terminal, the scenario panel with its checks, the helper chat, and the config inspector with an Apply button.">
 </picture>
 
-`web` is everything you see: the app in the browser. It has no backend of its own. Every piece of data comes from `api`, through one REST client and one WebSocket.
+`web` is the browser application. It has no backend of its own: all data comes from `api`, through a REST client and a single WebSocket.
 
-One screen does most of the work, the lab at `/session/[id]`:
+The main screen is the lab at `/session/[id]`:
 
-| Pane | What it is |
+| Pane | Content |
 |---|---|
-| **Topology canvas** | A live picture of your cluster: nodes, the pods on them, services and ingresses. It updates itself as the cluster changes |
-| **Terminal** | A real shell in your sandbox VM |
-| **Scenario** | The current step's goal, its checks turning green, hints, **Reset** and **Next** |
-| **Helper chat** | The optional AI helper, and the question card it uses to ask how to continue |
-| **Config inspector** | The full YAML of whatever you click, editable, with **Apply** |
+| **Topology canvas** | A live diagram of the cluster: nodes, pods, services and ingresses |
+| **Terminal** | A shell in the sandbox VM |
+| **Scenario** | The current step's goal, check results, hints, **Reset** and **Next** |
+| **Helper chat** | The optional AI helper and its question card |
+| **Config inspector** | The YAML of the selected resource, editable, with **Apply** |
 
-### How the screen stays true
+### Data flow
 
-1. `lib/socket.ts` holds the one WebSocket to `api` and decodes each binary Protobuf message.
-2. Messages about the cluster go to the **topology** store. It starts from a full snapshot and applies numbered diffs in order.
-3. Messages from the helper about where to look go to the **view** store, which only controls the camera, highlights and notes.
-4. The canvas draws the topology store, seen through the view store.
+1. `lib/socket.ts` maintains the WebSocket to `api` and decodes each binary Protobuf message.
+2. Cluster messages update the **topology** store, which starts from a full snapshot and applies numbered diffs in order.
+3. View messages from the helper update the **view** store, which controls the camera, highlights and annotations.
+4. The canvas renders the topology store through the view store.
 
-So what exists on screen can only come from the real cluster, and the helper can only point at it. Replay uses the same stores and the same drawing code. Only the source of the messages changes: the saved event log in place of the live socket.
+As a result, elements on the canvas originate only from actual cluster state, and the helper can only direct attention to them. Replay uses the same stores and rendering code, with the saved event log as the message source.
 
-The whole system at a glance is in the [docs hub](https://github.com/kubernetes-learning-platform/docs#readme).
-
-## 🗺️ Routes
+## Routes
 
 `web` has no API routes. It's a pure client of `api`, through the same reverse proxy. The deployed app runs on the Hetzner box and is only served over the WireGuard mesh: the demo laptop opens it at the Hetzner box's mesh address, over HTTPS from Caddy's internal CA.
 
@@ -49,7 +47,7 @@ The whole system at a glance is in the [docs hub](https://github.com/kubernetes-
 | `/session/[id]` | The lab: topology canvas, terminal, scenario panel, helper chat, config inspector |
 | `/session/[id]/replay` | The same lab, fed from the event log instead of the socket |
 
-## 👀 Three rules the UI is built on
+## UI principles
 
 1. **The learner drives.** The terminal and the editable inspector are yours by default, and read-only with a **Stop** button only while the helper is acting (`HelperState{acting}`). Everything except the chat works with no LLM.
 2. **The canvas draws only real cluster state.** Nodes, pods, services and ingresses come from `TopologySnapshot` / `TopologyDiff`, which the harness builds from Kubernetes watches. Never from what the helper says.
@@ -63,7 +61,7 @@ Replay runs the exact same reducers. It's just a different message source.
 
 **When the sandbox link drops.** The sandboxes live on another machine across the mesh. If `api` sends `SessionStatus{reconnecting}`, show a banner and keep the canvas on its last state. The next `TopologySnapshot` replaces it once the link is back.
 
-## 🧩 Modules
+## Modules
 
 | Module | Role |
 |---|---|
@@ -72,7 +70,7 @@ Replay runs the exact same reducers. It's just a different message source.
 | `state/` | Zustand stores: `topologyReducer` (applies snapshots and diffs by revision), `viewReducer` (intents → camera), scenario, chat, helper state |
 | `components/` | `TopologyCanvas` (React Flow + elkjs), `ScenarioPanel` (goal, checks, hints, Next, reset, Start over), `ChatPanel`, `QuestionCard`, `Terminal` (xterm.js), `ConfigInspector` (Monaco), `Timeline`, `QueuedScreen` |
 
-## 📁 Layout
+## Layout
 
 ```
 web/
@@ -91,19 +89,19 @@ web/
 └── .github/workflows/ci.yml
 ```
 
-## 🛠️ Local development
+## Local development
 
 No real sandbox needed. Run Postgres and api from `platform`'s dev Compose with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
 
-The message types come from `@kubernetes-learning-platform/contracts` on GitHub Packages. Installing it needs a personal access token with `read:packages`. See [contracts → Installing the packages](https://github.com/kubernetes-learning-platform/contracts#-installing-the-packages).
+The message types come from `@kubernetes-learning-platform/contracts` on GitHub Packages. Installing it needs a personal access token with `read:packages`. See [contracts → Installing the packages](https://github.com/kubernetes-learning-platform/contracts#installing-the-packages).
 
 **Ships:** the `web` container image (multi-arch) → GHCR. It runs in Docker Compose on the Hetzner box. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the mesh is served over HTTPS for exactly that reason.
 
-## 📚 More
+## Further reading
 
 - [ARCHITECTURE §4 Services](https://github.com/kubernetes-learning-platform/docs/blob/main/ARCHITECTURE.md#4-services-and-their-entry-points) (web modules)
 - [FEATURES](https://github.com/kubernetes-learning-platform/docs/blob/main/FEATURES.md): what each screen should do, and why
 
-## 📄 License
+## License
 
 [MIT](LICENSE)
