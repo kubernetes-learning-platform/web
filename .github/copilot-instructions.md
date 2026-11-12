@@ -21,5 +21,5 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - Files are UTF-8 with LF line endings.
 
 ## Don't
-- Don't comment on formatting that Prettier, ESLint or `.editorconfig` handles.
+- Don't comment on formatting or lint issues that Biome or `.editorconfig` handles.
 - Keep reviews short. Skip praise and summaries of the diff.
