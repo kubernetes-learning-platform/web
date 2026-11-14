@@ -22,7 +22,7 @@ The main screen is the lab at `/session/[id]`:
 | Pane | Content |
 |---|---|
 | **Topology canvas** | A live diagram of the cluster: nodes, pods, services and ingresses |
-| **Terminal** | A shell in the sandbox VM |
+| **Terminal** | A shell in the sandbox |
 | **Scenario** | The current step's goal, check results, hints, **Reset** and **Next** |
 | **Helper chat** | The optional AI helper and its question card |
 | **Config inspector** | The YAML of the selected resource, editable, with **Apply** |
@@ -38,7 +38,7 @@ As a result, elements on the canvas originate only from actual cluster state, an
 
 ## Routes
 
-`web` has no API routes. It's a pure client of `api`, through the same reverse proxy. The deployed app runs on the Hetzner box and is only served over the WireGuard mesh: the demo laptop opens it at the Hetzner box's mesh address, over HTTPS from Caddy's internal CA.
+`web` has no API routes. It's a pure client of `api`, through the same reverse proxy. The deployed app runs on the course VM and is only served over Tailscale: the demo laptop opens it at our own domain, which points at the VM's Tailscale address, over HTTPS with a real certificate.
 
 | Route | Screen |
 |---|---|
@@ -59,7 +59,7 @@ Replay runs the exact same reducers. It's just a different message source.
 
 **While a session is queued.** `SessionStatus{queued, position}` shows your place in line until the sandbox is ready.
 
-**When the sandbox link drops.** The sandboxes live on another machine across the mesh. If `api` sends `SessionStatus{reconnecting}`, show a banner and keep the canvas on its last state. The next `TopologySnapshot` replaces it once the link is back.
+**When the sandbox link drops.** The link between `api` and `envmgr` drops when `envmgr` restarts. If `api` sends `SessionStatus{reconnecting}`, show a banner and keep the canvas on its last state. The next `TopologySnapshot` replaces it once the link is back.
 
 ## Modules
 
@@ -91,11 +91,11 @@ web/
 
 ## Local development
 
-No real sandbox needed. Run Postgres and api from `platform`'s dev Compose with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
+No real sandbox needed. Run Postgres from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
 
 The message types come from `@kubernetes-learning-platform/contracts` on GitHub Packages. Installing it needs a personal access token with `read:packages`. See [contracts → Installing the packages](https://github.com/kubernetes-learning-platform/contracts#installing-the-packages).
 
-**Ships:** the `web` container image (multi-arch) → GHCR. It runs in Docker Compose on the Hetzner box. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the mesh is served over HTTPS for exactly that reason.
+**Ships:** the `web` container image (multi-arch) → GHCR. It runs in the stack on the course VM. A merge to `main` publishes an image tagged with the commit SHA, and a manual deploy picks which one runs. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the app is always served over HTTPS.
 
 ## Further reading
 
