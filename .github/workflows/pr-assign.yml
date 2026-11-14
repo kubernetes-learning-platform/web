@@ -1,0 +1,13 @@
+name: pr-assign
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions: {}
+
+jobs:
+  assign:
+    permissions:
+      pull-requests: write
+    uses: kubernetes-learning-platform/platform/.github/workflows/pr-assign.yml@main
