@@ -13,10 +13,10 @@ The Next.js (App Router) frontend of kubernetes-learning-platform, a live Kubern
 | `/session/[id]` | The lab: topology canvas, terminal, scenario panel, helper chat, config inspector |
 | `/session/[id]/replay` | The same lab, fed from the event log instead of the socket |
 
-Stack: React Flow + elkjs for the canvas, xterm.js for the terminal, Monaco for the inspector, Zustand for state, protobuf-es for messages, Biome for lint and format.
+Stack: Next.js 16 (App Router, TypeScript, Cache Components), React Flow + elkjs for the canvas, xterm.js for the terminal, Monaco for the inspector, Zustand for state, protobuf-es for messages, Biome for lint and format. No Tailwind. A component library isn't chosen yet.
 
 - **Owner:** Person 3.
-- **Status:** planned layout. web#1 scaffolds the app.
+- **Status:** scaffolded (web#1). One page renders; there are no tests yet.
 - **Design:** `README.md` here, and ARCHITECTURE §4.4 and FEATURES in the `docs` repo. Where they disagree, the `docs` repo wins.
 
 ## Layout
@@ -28,21 +28,25 @@ web/
 │   ├── components/     # topology/, chat/, terminal/, inspector/, timeline/, session/
 │   ├── lib/            # api.ts, socket.ts
 │   └── state/          # session and scenario stores, topology + view reducers
-├── Dockerfile          # Next.js standalone output
-└── .github/workflows/  # call platform's reusable workflows
+├── next.config.ts      # standalone output, Cache Components, Partial Prefetching
+├── package.json        # npm; @biomejs/biome pinned to the $schema version
+├── biome.json          # copy from platform/lint, like .editorconfig; .lint-sync records the commit
+├── Dockerfile          # Next.js standalone server on node:24-alpine, port 3000
+└── .github/workflows/  # ci.yml: platform's node-ci
 ```
 
 ## Build and check
 
-Not set up yet; web#1 creates the app with `create-next-app --biome` and the shared `biome.json` from `platform`, and adds the exact commands here. The checks CI will run:
+npm with Node 24. There are no tests yet. Before saying a change is done, run what CI runs:
 
-- `biome ci` (lint and format)
-- `tsc --noEmit`
-- the tests and `next build`
+- `npm ci`
+- `npm exec -- biome ci .` (lint and format; `npm run lint` and `npm run format` locally)
+- `npm run build`, then `npm run typecheck`
+- `../platform/lint/sync.sh --check .`, with `platform` at the commit in `.lint-sync`
 
-Run them before saying a change is done. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. Installing `@kubernetes-learning-platform/contracts` from GitHub Packages needs a personal access token with `read:packages` in `.npmrc`.
+`npm run dev` serves the app on `http://localhost:3000`. CI (`.github/workflows/ci.yml`) reports `ci / Node checks` (required in the `main` ruleset) on PRs. The image is built and pushed only on merges to `main` (platform#19, not set up yet). There is no `start` script, because `next start` doesn't support standalone output: run the image, or `node .next/standalone/server.js` after copying `.next/static` into `.next/standalone/.next/`. When `public/` exists, add it to the Dockerfile's runtime stage. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. Installing `@kubernetes-learning-platform/contracts` from GitHub Packages needs a personal access token with `read:packages` in `.npmrc`.
 
-**Lint configs.** `.editorconfig`, `biome.json` and `.lint-sync` are copies from `platform/lint/`. Don't edit them here; change `platform/lint/` instead, and CI fails a hand edit. Settings for this repo only go in a nested `biome.json` with `"extends": "//"`. web#1 makes the first copy with `lint/sync.sh --node`, replacing the `biome.json` that `create-next-app` writes. Pin `@biomejs/biome` to the exact version in `biome.json`'s `$schema` (2.6.4). Biome turns on its Next.js and React rules from `package.json` by itself, and skips everything in `.gitignore`.
+**Lint configs.** `.editorconfig`, `biome.json` and `.lint-sync` are copies from `platform/lint/`. Don't edit them here; change `platform/lint/` instead, and CI fails a hand edit. Settings for this repo only go in a nested `biome.json` with `"extends": "//"`. They were made with `lint/sync.sh --node`, replacing the `biome.json` that `create-next-app` writes. Pin `@biomejs/biome` to the exact version in `biome.json`'s `$schema` (2.6.4). Biome turns on its Next.js and React rules from `package.json` by itself, and skips everything in `.gitignore`.
 
 ## Code rules
 

@@ -4,7 +4,7 @@
 
 Part of [kubernetes-learning-platform](https://github.com/kubernetes-learning-platform/docs), a live Kubernetes lab with an optional AI helper. The [docs repository](https://github.com/kubernetes-learning-platform/docs) describes the overall system.
 
-**Owner:** Person 3 · **Status:** planned layout, scaffolding lands in M1.
+**Owner:** Person 3 · **Status:** scaffolded. One page renders and CI checks it; there are no tests yet.
 
 ---
 
@@ -85,11 +85,14 @@ web/
 │   │   └── session/         # scenario panel, queued screen
 │   ├── lib/                 # api.ts, socket.ts
 │   └── state/               # session and scenario stores, topology + view reducers
-├── Dockerfile               # Next.js standalone output
+├── next.config.ts           # standalone output, Cache Components, Partial Prefetching
+├── Dockerfile               # Next.js standalone server on node:24-alpine, port 3000
 └── .github/workflows/ci.yml
 ```
 
 ## Local development
+
+`npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and `docker build --tag web .` builds the image. Styling: no Tailwind, and a component library isn't chosen yet. There are no tests yet.
 
 No real sandbox needed. Run Postgres from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
 
