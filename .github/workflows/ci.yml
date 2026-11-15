@@ -1,0 +1,13 @@
+name: ci
+
+# Runs platform's Node checks. Images are built and pushed on main, not here.
+on:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  ci:
+    permissions:
+      contents: read
+    uses: kubernetes-learning-platform/platform/.github/workflows/node-ci.yml@main
