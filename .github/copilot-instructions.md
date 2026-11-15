@@ -22,4 +22,5 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 
 ## Don't
 - Don't comment on formatting or lint issues that Biome or `.editorconfig` handles.
+- Don't suggest changes to the lint copies (`.editorconfig`, `biome.json`, `.lint-sync`). They come from `platform/lint/`, and a hand edit fails CI.
 - Keep reviews short. Skip praise and summaries of the diff.

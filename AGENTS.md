@@ -42,6 +42,8 @@ Not set up yet; web#1 creates the app with `create-next-app --biome` and the sha
 
 Run them before saying a change is done. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. Installing `@kubernetes-learning-platform/contracts` from GitHub Packages needs a personal access token with `read:packages` in `.npmrc`.
 
+**Lint configs.** `.editorconfig`, `biome.json` and `.lint-sync` are copies from `platform/lint/`. Don't edit them here; change `platform/lint/` instead, and CI fails a hand edit. Settings for this repo only go in a nested `biome.json` with `"extends": "//"`. web#1 makes the first copy with `lint/sync.sh --node`, replacing the `biome.json` that `create-next-app` writes. Pin `@biomejs/biome` to the exact version in `biome.json`'s `$schema` (2.6.4). Biome turns on its Next.js and React rules from `package.json` by itself, and skips everything in `.gitignore`.
+
 ## Code rules
 
 - **The canvas draws only real cluster state.** Graph entities come only from `TopologySnapshot` / `TopologyDiff`, never from chat text or helper messages.
@@ -61,6 +63,7 @@ Run them before saying a change is done. Use Biome, not ESLint or Prettier. Loca
 
 - A merge to `main` publishes the `web` image to GHCR, tagged with the commit SHA. A manual deploy picks which one runs.
 - New `contracts` versions arrive as bot commits, `build(deps): bump contracts to X.Y.Z`. If the build fails after a bump, the bot opens a PR here instead; fix the code in that PR.
+- New lint configs arrive the same way, as `chore: sync lint configs` after a change to `platform/lint/`. If the new rules break the build, the bot opens a PR instead; fix the code in that PR.
 
 ## Commits, branches and PRs
 
@@ -69,7 +72,7 @@ Run them before saying a change is done. Use Biome, not ESLint or Prettier. Loca
 - **Types:** `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`, `style`. Add `!` for a breaking change.
 - **Branches:** use the name in the `Branch:` line of the issue being worked on. Don't make one up. `gh issue develop <number> --name <branch> --checkout` creates it linked to the issue.
 - **Where changes land:** while the repo is still empty, documentation goes straight to `main`. From the setup issues on (web#1), every change goes through a PR from the issue's branch.
-- **PRs:** the title follows the commit format, at most 72 characters; it becomes the squash commit on `main`. The description is one or two plain sentences, plus `Closes #<number>`. Merging needs one approval from someone other than the author. Filip is requested as reviewer on every PR (`.github/CODEOWNERS`), and the author is assigned automatically. Only Filip merges.
+- **PRs:** the title follows the commit format, at most 72 characters; it becomes the squash commit on `main`. The description is one or two plain sentences, plus `Closes #<number>`. Merging needs one approval from someone other than the author, and the branch must be up to date with `main`. Filip is requested as reviewer on every PR (`.github/CODEOWNERS`), and the author is assigned automatically. Only Filip merges.
 - **Public repo:** everything committed is public at once. Never commit secrets, real `.env` files or personal data; push protection only catches known token formats.
 
 ## Keep docs in sync
