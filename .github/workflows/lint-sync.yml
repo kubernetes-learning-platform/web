@@ -1,0 +1,21 @@
+name: lint-sync
+
+on:
+  repository_dispatch:
+    types: [lint-updated]
+
+permissions: {}
+
+concurrency:
+  group: lint-sync
+
+jobs:
+  sync:
+    permissions:
+      contents: read
+    uses: kubernetes-learning-platform/platform/.github/workflows/lint-sync.yml@main
+    with:
+      commit: ${{ github.event.client_payload.commit }}
+      ci: node-ci
+    secrets:
+      app-private-key: ${{ secrets.UPDATE_BOT_PRIVATE_KEY }}
