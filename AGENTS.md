@@ -32,7 +32,7 @@ web/
 ├── package.json        # npm; @biomejs/biome pinned to the $schema version
 ├── biome.json          # copy from platform/lint, like .editorconfig; .lint-sync records the commit
 ├── Dockerfile          # Next.js standalone server on node:24-alpine, port 3000
-└── .github/workflows/  # ci.yml: platform's node-ci
+└── .github/workflows/  # ci.yml: platform's node-ci; contracts-bump.yml, lint-sync.yml: the update bot
 ```
 
 ## Build and check
@@ -66,8 +66,9 @@ npm with Node 24. There are no tests yet. Before saying a change is done, run wh
 ## Releases and dependencies
 
 - A merge to `main` publishes the `web` image to GHCR, tagged with the commit SHA. A manual deploy picks which one runs.
-- New `contracts` versions arrive as bot commits, `build(deps): bump contracts to X.Y.Z`. If the build fails after a bump, the bot opens a PR here instead; fix the code in that PR.
-- New lint configs arrive the same way, as `chore: sync lint configs` after a change to `platform/lint/`. If the new rules break the build, the bot opens a PR instead; fix the code in that PR.
+- New `contracts` versions arrive as bot commits, `build(deps): bump contracts to X.Y.Z`, from `.github/workflows/contracts-bump.yml`, which calls `platform`'s update bot on `repository_dispatch`. The bot runs `platform`'s `node-ci` on the commit before it pushes to `main`. If that fails, it opens a PR here instead; fix the code in that PR.
+- New lint configs arrive the same way, as `chore: sync lint configs` from `.github/workflows/lint-sync.yml` after a change to `platform/lint/`. If the new rules break the build, the bot opens a PR instead; fix the code in that PR.
+- When you add `@kubernetes-learning-platform/contracts`, pin an exact version in `package.json`, without `^` or `~`, so the bot can find and bump it. See `platform`'s README, Update bot.
 
 ## Commits, branches and PRs
 

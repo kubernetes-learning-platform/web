@@ -87,7 +87,7 @@ web/
 │   └── state/               # session and scenario stores, topology + view reducers
 ├── next.config.ts           # standalone output, Cache Components, Partial Prefetching
 ├── Dockerfile               # Next.js standalone server on node:24-alpine, port 3000
-└── .github/workflows/ci.yml
+└── .github/workflows/       # ci.yml, contracts-bump.yml, lint-sync.yml
 ```
 
 ## Local development
