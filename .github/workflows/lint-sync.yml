@@ -13,6 +13,7 @@ jobs:
   sync:
     permissions:
       contents: read
+      packages: read
     uses: kubernetes-learning-platform/platform/.github/workflows/lint-sync.yml@main
     with:
       commit: ${{ github.event.client_payload.commit }}

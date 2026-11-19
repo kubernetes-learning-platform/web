@@ -86,17 +86,36 @@ web/
 │   ├── lib/                 # api.ts, socket.ts
 │   └── state/               # session and scenario stores, topology + view reducers
 ├── next.config.ts           # standalone output, Cache Components, Partial Prefetching
+├── .npmrc                   # the @kubernetes-learning-platform scope from GitHub Packages
 ├── Dockerfile               # Next.js standalone server on node:24-alpine, port 3000
 └── .github/workflows/       # ci.yml, contracts-bump.yml, lint-sync.yml
 ```
 
+## Packages
+
+`@kubernetes-learning-platform/contracts` comes from GitHub Packages, which needs a token even to read a public package. `.npmrc` sends the `@kubernetes-learning-platform` scope there and reads the token from `GITHUB_PACKAGES_TOKEN`; everything else comes from the npm registry. Once, give the GitHub CLI the `read:packages` scope, then export the token before `npm ci`:
+
+```bash
+gh auth refresh --hostname github.com --scopes read:packages
+```
+
+```bash
+export GITHUB_PACKAGES_TOKEN="$(gh auth token)"
+```
+
+A classic personal access token with `read:packages` works too. CI passes its own `GITHUB_TOKEN`, and the image build takes the token as a build secret:
+
+```bash
+docker build --secret id=github-packages-token,env=GITHUB_PACKAGES_TOKEN --tag web .
+```
+
+The version is pinned exactly in `package.json`, without `^` or `~`, so the update bot can bump it.
+
 ## Local development
 
-`npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and `docker build --tag web .` builds the image. Styling: no Tailwind, and a component library isn't chosen yet. There are no tests yet.
+Set `GITHUB_PACKAGES_TOKEN` first (see [Packages](#packages)). `npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and the `docker build` command under [Packages](#packages) builds the image. Styling: no Tailwind, and a component library isn't chosen yet. There are no tests yet.
 
 No real sandbox needed. Run Postgres from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
-
-The message types come from `@kubernetes-learning-platform/contracts` on GitHub Packages. Installing it needs a personal access token with `read:packages`. See [contracts → Installing the packages](https://github.com/kubernetes-learning-platform/contracts#installing-the-packages).
 
 **Ships:** the `web` container image (multi-arch) → GHCR. It runs in the stack on the course VM. A merge to `main` publishes an image tagged with the commit SHA, and a manual deploy picks which one runs. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the app is always served over HTTPS.
 
