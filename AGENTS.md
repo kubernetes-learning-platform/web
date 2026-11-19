@@ -8,14 +8,14 @@ The Next.js (App Router) frontend of kubernetes-learning-platform, a live Kubern
 
 | Route | Screen |
 |---|---|
-| `/login` | Sign in (the auth mechanism is still OPEN) |
+| `/login` | Sign in with a name (name only for now) |
 | `/` | Scenario list with progress, blank cluster start, resume the active session |
 | `/session/[id]` | The lab: topology canvas, terminal, scenario panel, helper chat, config inspector |
 | `/session/[id]/replay` | The same lab, fed from the event log instead of the socket |
 
-Stack: Next.js 16 (App Router, TypeScript, Cache Components), React Flow + elkjs for the canvas, xterm.js for the terminal, Monaco for the inspector, Zustand for state, protobuf-es for messages, Biome for lint and format. No Tailwind. A component library isn't chosen yet.
+Stack: Next.js 16 (App Router, TypeScript, Cache Components), React Flow + elkjs for the canvas, xterm.js for the terminal, Monaco for the inspector, Zustand for state, protobuf-es for messages, Biome for lint and format. MUI for components and theming, with `@mui/material-nextjs`. No Tailwind.
 
-- **Owner:** Person 3.
+- **Owners:** Person 2 and Person 3, who split `api` and `web` by feature.
 - **Status:** scaffolded (web#1). One page renders; there are no tests yet.
 - **Design:** `README.md` here, and ARCHITECTURE §4.4 and FEATURES in the `docs` repo. Where they disagree, the `docs` repo wins.
 
@@ -36,6 +36,8 @@ web/
 └── .github/workflows/  # ci.yml: platform's node-ci; contracts-bump.yml, lint-sync.yml: the update bot
 ```
 
+Scripts, when there are any, go in `scripts/`.
+
 ## Build and check
 
 npm with Node 24. There are no tests yet. Before saying a change is done, run what CI runs:
@@ -45,7 +47,7 @@ npm with Node 24. There are no tests yet. Before saying a change is done, run wh
 - `npm run build`, then `npm run typecheck`
 - `../platform/lint/sync.sh --check .`, with `platform` at the commit in `.lint-sync`
 
-`npm run dev` serves the app on `http://localhost:3000`. CI (`.github/workflows/ci.yml`) reports `ci / Node checks` (required in the `main` ruleset) on PRs. The image is built and pushed only on merges to `main` (platform#19, not set up yet). There is no `start` script, because `next start` doesn't support standalone output: run the image, or `node .next/standalone/server.js` after copying `.next/static` into `.next/standalone/.next/`. When `public/` exists, add it to the Dockerfile's runtime stage. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. `npm ci` needs `GITHUB_PACKAGES_TOKEN`, because GitHub Packages wants a token even for public packages: `gh auth refresh --hostname github.com --scopes read:packages` once, then `export GITHUB_PACKAGES_TOKEN="$(gh auth token)"`. `.npmrc` reads it for the `@kubernetes-learning-platform` scope only. CI passes its `GITHUB_TOKEN`, so every workflow job that installs grants `packages: read`, and the image build takes it as the `github-packages-token` build secret.
+`npm run dev` serves the app on `http://localhost:3000`. CI (`.github/workflows/ci.yml`) reports `ci / Node checks` (required in the `main` ruleset) on PRs. The image is built and pushed only on merges to `main` (platform#19, not set up yet). There is no `start` script, because `next start` doesn't support standalone output: run the image, or `node .next/standalone/server.js` after copying `.next/static` into `.next/standalone/.next/`. When `public/` exists, add it to the Dockerfile's runtime stage. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres and Caddy from `platform`'s dev Compose and api with the fake sandbox, and open `http://localhost:8080`, where Caddy serves `web` and `api` on one origin. `npm ci` needs `GITHUB_PACKAGES_TOKEN`, because GitHub Packages wants a token even for public packages: `gh auth refresh --hostname github.com --scopes read:packages` once, then `export GITHUB_PACKAGES_TOKEN="$(gh auth token)"`. `.npmrc` reads it for the `@kubernetes-learning-platform` scope only. CI passes its `GITHUB_TOKEN`, so every workflow job that installs grants `packages: read`, and the image build takes it as the `github-packages-token` build secret.
 
 **Lint configs.** `.editorconfig`, `biome.json` and `.lint-sync` are copies from `platform/lint/`. Don't edit them here; change `platform/lint/` instead, and CI fails a hand edit. Settings for this repo only go in a nested `biome.json` with `"extends": "//"`. They were made with `lint/sync.sh --node`, replacing the `biome.json` that `create-next-app` writes. Pin `@biomejs/biome` to the exact version in `biome.json`'s `$schema` (2.6.4). Biome turns on its Next.js and React rules from `package.json` by itself, and skips everything in `.gitignore`.
 
@@ -61,6 +63,7 @@ npm with Node 24. There are no tests yet. Before saying a change is done, run wh
 - **Queue.** `SessionStatus{queued, position}` shows the place in line, never an error.
 - **Types.** Use the generated types from `@kubernetes-learning-platform/contracts`. Never hand-write message types.
 - **Networking.** Only same-origin `/api` and `/ws`. No hardcoded hosts, no secrets in client code or `NEXT_PUBLIC_*` variables. The app is always served over HTTPS, so HTTPS-only browser APIs are fine.
+- **Data.** Pages that talk to `api` are client components, and the Next server never calls `api`.
 - **React.** Effects clean up their sockets, terminals and subscriptions. Large lists and graphs avoid needless re-renders.
 - **Accessibility.** Interactive elements are reachable by keyboard and have labels.
 

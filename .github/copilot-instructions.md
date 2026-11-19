@@ -1,6 +1,6 @@
 # Copilot instructions: web
 
-This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, a live Kubernetes lab with an optional AI helper. It's a pure client of `api`: there are no API routes here. It uses React Flow + elkjs for the topology canvas, xterm.js for the terminal, Monaco for the config inspector, Zustand for state, and protobuf-es for messages. The full design is in the `docs` repo (ARCHITECTURE.md §4.4, FEATURES.md).
+This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, a live Kubernetes lab with an optional AI helper. It's a pure client of `api`: there are no API routes here. It uses MUI for components, React Flow + elkjs for the topology canvas, xterm.js for the terminal, Monaco for the config inspector, Zustand for state, and protobuf-es for messages. The full design is in the `docs` repo (ARCHITECTURE.md §4.4, FEATURES.md).
 
 ## When reviewing, focus on
 - **The canvas draws only real cluster state.** Nodes, pods, services and edges come only from `TopologySnapshot` / `TopologyDiff`. Flag code that adds, removes or changes graph entities based on chat text or agent messages.
@@ -13,6 +13,7 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - **Queue.** `SessionStatus{queued, position}` shows the place in line, never an error.
 - **Types.** Use the generated types from `@kubernetes-learning-platform/contracts`. Never hand-write message types.
 - **Networking.** Only same-origin `/api` and `/ws` through the reverse proxy. No hardcoded hosts, no secrets in client code or `NEXT_PUBLIC_*` variables.
+- **Data.** Pages that talk to `api` are client components. Flag server components or route handlers that call `api`.
 - **React.** Effects clean up their sockets, terminals and subscriptions, and large lists and graphs avoid needless re-renders.
 - **Accessibility.** Interactive elements are reachable by keyboard and have labels.
 
@@ -21,7 +22,7 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - Files are UTF-8 with LF line endings.
 - CI on PRs runs `platform`'s `node-ci` (lint copies, `biome ci`, build, `tsc --noEmit`). The image is built and pushed only on merges to `main`. There are no tests yet.
 - `contracts-bump.yml` and `lint-sync.yml` run `platform`'s update bot on `repository_dispatch`, never on PRs. Flag a `@kubernetes-learning-platform/contracts` dependency that isn't an exact version, because the bot can't bump it. Every workflow job that installs packages grants `packages: read` and passes `GITHUB_PACKAGES_TOKEN`.
-- No Tailwind. Flag a PR that adds it.
+- MUI is the component library, and there's no Tailwind. Flag a PR that adds Tailwind or a second component library.
 
 ## Don't
 - Don't comment on formatting or lint issues that Biome or `.editorconfig` handles.

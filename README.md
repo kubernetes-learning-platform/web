@@ -4,7 +4,7 @@
 
 Part of [kubernetes-learning-platform](https://github.com/kubernetes-learning-platform/docs), a live Kubernetes lab with an optional AI helper. The [docs repository](https://github.com/kubernetes-learning-platform/docs) describes the overall system.
 
-**Owner:** Person 3 · **Status:** scaffolded. One page renders and CI checks it; there are no tests yet.
+**Owners:** Person 2 and Person 3, by feature · **Status:** scaffolded. One page renders and CI checks it; there are no tests yet.
 
 ---
 
@@ -42,7 +42,7 @@ As a result, elements on the canvas originate only from actual cluster state, an
 
 | Route | Screen |
 |---|---|
-| `/login` | Sign in (the form depends on the auth choice, still **OPEN**) |
+| `/login` | Sign in with a name; a sturdier mechanism can come later |
 | `/` | Scenario list with your progress, blank cluster start, resume the active session |
 | `/session/[id]` | The lab: topology canvas, terminal, scenario panel, helper chat, config inspector |
 | `/session/[id]/replay` | The same lab, fed from the event log instead of the socket |
@@ -113,9 +113,9 @@ The version is pinned exactly in `package.json`, without `^` or `~`, so the upda
 
 ## Local development
 
-Set `GITHUB_PACKAGES_TOKEN` first (see [Packages](#packages)). `npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and the `docker build` command under [Packages](#packages) builds the image. Styling: no Tailwind, and a component library isn't chosen yet. There are no tests yet.
+Set `GITHUB_PACKAGES_TOKEN` first (see [Packages](#packages)). `npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. Open it through Caddy from `platform`'s dev Compose, on `http://localhost:8080`, so `/api` and `/ws` reach api on the same origin. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and the `docker build` command under [Packages](#packages) builds the image. Styling: MUI, set up with `@mui/material-nextjs` (web#5). No Tailwind. There are no tests yet.
 
-No real sandbox needed. Run Postgres from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
+No real sandbox needed. Run Postgres and Caddy from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
 
 **Ships:** the `web` container image (multi-arch) → GHCR. It runs in the stack on the course VM. A merge to `main` publishes an image tagged with the commit SHA, and a manual deploy picks which one runs. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the app is always served over HTTPS.
 
