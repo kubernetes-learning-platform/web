@@ -29,7 +29,8 @@ web/
 │   ├── lib/            # api.ts, socket.ts
 │   └── state/          # session and scenario stores, topology + view reducers
 ├── next.config.ts      # standalone output, Cache Components, Partial Prefetching
-├── package.json        # npm; @biomejs/biome pinned to the $schema version
+├── package.json        # npm; @biomejs/biome pinned to the $schema version, contracts pinned exactly
+├── .npmrc              # the @kubernetes-learning-platform scope from GitHub Packages
 ├── biome.json          # copy from platform/lint, like .editorconfig; .lint-sync records the commit
 ├── Dockerfile          # Next.js standalone server on node:24-alpine, port 3000
 └── .github/workflows/  # ci.yml: platform's node-ci; contracts-bump.yml, lint-sync.yml: the update bot
@@ -44,7 +45,7 @@ npm with Node 24. There are no tests yet. Before saying a change is done, run wh
 - `npm run build`, then `npm run typecheck`
 - `../platform/lint/sync.sh --check .`, with `platform` at the commit in `.lint-sync`
 
-`npm run dev` serves the app on `http://localhost:3000`. CI (`.github/workflows/ci.yml`) reports `ci / Node checks` (required in the `main` ruleset) on PRs. The image is built and pushed only on merges to `main` (platform#19, not set up yet). There is no `start` script, because `next start` doesn't support standalone output: run the image, or `node .next/standalone/server.js` after copying `.next/static` into `.next/standalone/.next/`. When `public/` exists, add it to the Dockerfile's runtime stage. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. Installing `@kubernetes-learning-platform/contracts` from GitHub Packages needs a personal access token with `read:packages` in `.npmrc`.
+`npm run dev` serves the app on `http://localhost:3000`. CI (`.github/workflows/ci.yml`) reports `ci / Node checks` (required in the `main` ruleset) on PRs. The image is built and pushed only on merges to `main` (platform#19, not set up yet). There is no `start` script, because `next start` doesn't support standalone output: run the image, or `node .next/standalone/server.js` after copying `.next/static` into `.next/standalone/.next/`. When `public/` exists, add it to the Dockerfile's runtime stage. Use Biome, not ESLint or Prettier. Local development needs no real sandbox: run Postgres from `platform`'s dev Compose and api with the fake sandbox. `npm ci` needs `GITHUB_PACKAGES_TOKEN`, because GitHub Packages wants a token even for public packages: `gh auth refresh --hostname github.com --scopes read:packages` once, then `export GITHUB_PACKAGES_TOKEN="$(gh auth token)"`. `.npmrc` reads it for the `@kubernetes-learning-platform` scope only. CI passes its `GITHUB_TOKEN`, so every workflow job that installs grants `packages: read`, and the image build takes it as the `github-packages-token` build secret.
 
 **Lint configs.** `.editorconfig`, `biome.json` and `.lint-sync` are copies from `platform/lint/`. Don't edit them here; change `platform/lint/` instead, and CI fails a hand edit. Settings for this repo only go in a nested `biome.json` with `"extends": "//"`. They were made with `lint/sync.sh --node`, replacing the `biome.json` that `create-next-app` writes. Pin `@biomejs/biome` to the exact version in `biome.json`'s `$schema` (2.6.4). Biome turns on its Next.js and React rules from `package.json` by itself, and skips everything in `.gitignore`.
 
@@ -68,7 +69,7 @@ npm with Node 24. There are no tests yet. Before saying a change is done, run wh
 - A merge to `main` publishes the `web` image to GHCR, tagged with the commit SHA. A manual deploy picks which one runs.
 - New `contracts` versions arrive as bot commits, `build(deps): bump contracts to X.Y.Z`, from `.github/workflows/contracts-bump.yml`, which calls `platform`'s update bot on `repository_dispatch`. The bot runs `platform`'s `node-ci` on the commit before it pushes to `main`. If that fails, it opens a PR here instead; fix the code in that PR.
 - New lint configs arrive the same way, as `chore: sync lint configs` from `.github/workflows/lint-sync.yml` after a change to `platform/lint/`. If the new rules break the build, the bot opens a PR instead; fix the code in that PR.
-- When you add `@kubernetes-learning-platform/contracts`, pin an exact version in `package.json`, without `^` or `~`, so the bot can find and bump it. See `platform`'s README, Update bot.
+- `@kubernetes-learning-platform/contracts` is pinned to an exact version in `package.json`, without `^` or `~`, so the bot can find and bump it. See `platform`'s README, Update bot.
 
 ## Commits, branches and PRs
 

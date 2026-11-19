@@ -10,4 +10,5 @@ jobs:
   ci:
     permissions:
       contents: read
+      packages: read
     uses: kubernetes-learning-platform/platform/.github/workflows/node-ci.yml@main

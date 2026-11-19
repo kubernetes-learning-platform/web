@@ -20,7 +20,7 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - PR titles are Conventional Commits (`feat: short description`), one line, at most 72 characters, no trailing period.
 - Files are UTF-8 with LF line endings.
 - CI on PRs runs `platform`'s `node-ci` (lint copies, `biome ci`, build, `tsc --noEmit`). The image is built and pushed only on merges to `main`. There are no tests yet.
-- `contracts-bump.yml` and `lint-sync.yml` run `platform`'s update bot on `repository_dispatch`, never on PRs. Flag a `@kubernetes-learning-platform/contracts` dependency that isn't an exact version, because the bot can't bump it.
+- `contracts-bump.yml` and `lint-sync.yml` run `platform`'s update bot on `repository_dispatch`, never on PRs. Flag a `@kubernetes-learning-platform/contracts` dependency that isn't an exact version, because the bot can't bump it. Every workflow job that installs packages grants `packages: read` and passes `GITHUB_PACKAGES_TOKEN`.
 - No Tailwind. Flag a PR that adds it.
 
 ## Don't
