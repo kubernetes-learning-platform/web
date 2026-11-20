@@ -1,0 +1,5 @@
+# Local dev only: Postgres and Caddy from platform/dev, shared with the other repo.
+name: kubelab-dev
+
+include:
+  - ../platform/dev/docker-compose.dev.yml

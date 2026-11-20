@@ -87,6 +87,7 @@ web/
 │   └── state/               # session and scenario stores, topology + view reducers
 ├── next.config.ts           # standalone output, Cache Components, Partial Prefetching
 ├── .npmrc                   # the @kubernetes-learning-platform scope from GitHub Packages
+├── compose.yaml             # local dev only: includes platform's dev Compose (Postgres, Caddy)
 ├── Dockerfile               # Next.js standalone server on node:24-alpine, port 3000
 └── .github/workflows/       # ci.yml, contracts-bump.yml, lint-sync.yml
 ```
@@ -113,9 +114,9 @@ The version is pinned exactly in `package.json`, without `^` or `~`, so the upda
 
 ## Local development
 
-Set `GITHUB_PACKAGES_TOKEN` first (see [Packages](#packages)). `npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. Open it through Caddy from `platform`'s dev Compose, on `http://localhost:8080`, so `/api` and `/ws` reach api on the same origin. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and the `docker build` command under [Packages](#packages) builds the image. Styling: MUI, set up with `@mui/material-nextjs` (web#5). No Tailwind. There are no tests yet.
+Set `GITHUB_PACKAGES_TOKEN` first (see [Packages](#packages)). `npm ci`, then `npm run dev` serves the app on `http://localhost:3000`. Open it through Caddy on `http://localhost:8080`, so `/api` and `/ws` reach api on the same origin: `docker compose up -d --wait` in this repo starts Caddy and Postgres. `compose.yaml` includes `platform`'s dev Compose, so clone `platform` next to this repo; it's the same stack `api` starts, and `docker compose down` stops it. `npm run lint`, `npm run build` and `npm run typecheck` run the same checks as CI, and the `docker build` command under [Packages](#packages) builds the image. Styling: MUI, set up with `@mui/material-nextjs` (web#5). No Tailwind. There are no tests yet.
 
-No real sandbox needed. Run Postgres and Caddy from `platform`'s dev Compose and api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
+No real sandbox needed. Run api with the **fake sandbox**. It drives the socket with a scripted cluster, so the canvas, scenario panel, chat and terminal can be built before any real sandbox exists.
 
 **Ships:** the `web` container image (multi-arch) → GHCR. It runs in the stack on the course VM. A merge to `main` publishes an image tagged with the commit SHA, and a manual deploy picks which one runs. Use HTTPS-only browser APIs (clipboard, `crypto.randomUUID`) freely: the app is always served over HTTPS.
 

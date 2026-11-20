@@ -23,6 +23,7 @@ This repo is the Next.js (App Router) frontend of kubernetes-learning-platform, 
 - CI on PRs runs `platform`'s `node-ci` (lint copies, `biome ci`, build, `tsc --noEmit`). The image is built and pushed only on merges to `main`. There are no tests yet.
 - `contracts-bump.yml` and `lint-sync.yml` run `platform`'s update bot on `repository_dispatch`, never on PRs. Flag a `@kubernetes-learning-platform/contracts` dependency that isn't an exact version, because the bot can't bump it. Every workflow job that installs packages grants `packages: read` and passes `GITHUB_PACKAGES_TOKEN`.
 - MUI is the component library, and there's no Tailwind. Flag a PR that adds Tailwind or a second component library.
+- `compose.yaml` is for local dev only: it includes `../platform/dev/docker-compose.dev.yml` and holds nothing else. Flag services, ports or secrets added to it here, and any use of it as the deploy format, which is still OPEN.
 
 ## Don't
 - Don't comment on formatting or lint issues that Biome or `.editorconfig` handles.
